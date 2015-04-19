@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+	<h1>
+    <a href="/" id="title"></a>
+	</h1>
+	</div>
+<div id="md" style="display: none;">
+<!-- markdown -->
+
+    前两天我在思考一个问题，我们能不能将我们的钢琴改造成一个键盘，然后用钢琴来编程。我想是可能的。我是一名hacker，所以我希望以音乐的名义来重新定义编程。 
+
+    我给未来使用音符来编程的人们起了一个好听的名字，Codeartist。
+    如果编程用的是钢琴的发声方式，那么我称他为Pianogrammer, 同所有钢琴师一样直到有一天他会成为Pianogramist。
+    我正是一名hacker，也是一名刚刚上路的Pianogrammer。
+   作为一名Pianogrammer，同钢琴家一样，我们的“武器”就是日常使用的keyboard,  而与他们的不同之处在于我们的music keyboard就是我们日常code的keyboard。我们改造了键盘以使每一枚按键都能发出独特的midi 音符，完美实现了普通keyboard到半midi键盘的转变。此后，我们的keyboard作为可靠的音源来演奏构造良好的code中蕴藏的旋律。此外，Pianogrammer的“武器库”里除了双手直接接触的keyboard，能够用于接受midi note 并且发出优美音色的音乐制作软件也是不可或缺的，我们通常用它来直接获得“弹药”。此外，如果把我们的keyboard比作是一把高精度突击步枪，让使用它的人格外优秀的就是艺术家们通常使用的metronome，在这是它的瞄准器。有了它我们将可以通过稳定的不断练习获得稳定而优雅的乐音输出，同时还有别的极好的某样东西。
+热爱一门艺术，并且将它融入到另一门工艺里，我们将在这种融合中得到完美技艺和极致艺术的升华，不仅仅获得美的体验，而且收获一份又一份感动。
+既然Pianogrammers这样的头衔赋予了我们，而不是Grampianist,这就意味着我们与传统艺术家们紧密相联，拥有无穷的创造力和执行力，同时我们又独一无二，极富生产力。我们通过音乐创造的不仅是形而上的乐音，还将原本形而上的那一部分转换成了更强大的生产力，从而在我们的双手之下，极其自然的旋律将诞生一批又超越一批无与伦比的产物。
+<!-- markdown end -->
+</div>
+<div class="entry" id="main">
+<!-- content -->
+
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "test.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>
